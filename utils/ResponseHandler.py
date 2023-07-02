@@ -1,5 +1,6 @@
 import random
 
+
 class ResponseHandler:
     @staticmethod
     def login_user_fail(user_data: dict) -> tuple:
@@ -12,8 +13,8 @@ class ResponseHandler:
         return {
             'userData': {
                 'name': user_data['username'],
-                'discriminant': f'{random.randint(10000, 99999)}',
-
+                'discriminant': user_data['discriminant'],
+                'user_id': user_data['user_id'],
             },
             'sessionData': {
                 'JWT': sessionJWT,
