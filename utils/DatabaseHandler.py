@@ -9,14 +9,7 @@ class DatabaseHandler:
     load_dotenv()
 
     _client = client = MongoClient(
-        f'mongodb+srv://{
-            os.getenv("DATABASE_USERNAME")
-        }:{
-            os.getenv("DATABASE_PASSWORD")
-        }@{
-            os.getenv("DATABASE_NAME")
-        }.6gnckw0.mongodb.net'
-    )
+        f'mongodb+srv://{os.getenv("DATABASE_USERNAME")}:{os.getenv("DATABASE_PASSWORD")}@{os.getenv("DATABASE_NAME")}.6gnckw0.mongodb.net')
 
     @staticmethod
     def get_client_id(username: str, password: str) -> str:

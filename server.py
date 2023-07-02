@@ -11,8 +11,14 @@ cors = CORS(app)
 
 @app.route('/api/login', methods=['POST'])
 def index() -> tuple:
-    user_data: dict = request.json['userData']
+    login_user_data: dict = request.json['userData']
     # meta_data: dict = request.json['metaData']
+
+    user_data: dict = {
+        'username': login_user_data['username'],
+        'user_id': '1234',
+        'discriminant': '9999',
+    }
 
     """ Always return a 200 response, even if the login fails. """
     return ResponseHandler.login_user_succ(user_data, JWTHandler.construct_jwt())
