@@ -27,7 +27,7 @@ class JWTHandler:
 
         return decoded_jwt
 
-    def construct_jwt() -> str:
+    def construct_jwt(user_data: dict) -> str:
         # Construct a JWT with the following payload:
         presentDate: datetime.datetime.date = datetime.datetime.now()
         unix_timestamp: datetime.datetime.timestamp = datetime.datetime.timestamp(presentDate) * 1000
@@ -35,6 +35,7 @@ class JWTHandler:
         # Return the encoded JWT
         encoded_jwt: dict = jwt.encode({
             'iat': unix_timestamp,
+            'user_id': user_data['user_id'],
             'exp': unix_timestamp + JWTHandler.JWT_TOKEN_TIMEOUT,
         }, dotenv.dotenv_values()["JWT_SECRET"], algorithm='HS256')
 

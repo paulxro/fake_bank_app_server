@@ -3,25 +3,52 @@ from flask_cors import CORS
 
 from utils.ResponseHandler import ResponseHandler
 from utils.DatabaseHandler import DatabaseHandler
+from utils.DatabaseHandler import DatabaseStatusCode
 from utils.JWTHandler import JWTHandler
 
 
 app = Flask(__name__)
 cors = CORS(app)
 
+@app.route('/api/register', methods=['POST'])
+def register() -> tuple:
+    register_user_data: dict = request.json['userData']
+
+    new_user_data: dict = {
+        'username': register_user_data['username'],
+        'password': register_user_data['password'],
+    }
+
+    register_user_res: dict = DatabaseHandler.register_user(new_user_data)
+
+    if register_user_res['status'] == DatabaseStatusCode.FAIL:
+        return ResponseHandler.register_user_fail()
+    
+    login_user_res: dict = DatabaseHandler.login_user(new_user_data)
+
+    if login_user_res['status'] == DatabaseStatusCode.FAIL:
+        return ResponseHandler.login_user_fail()
+    
+    return ResponseHandler.login_user_succ(
+        login_user_res['userData'], 
+        JWTHandler.construct_jwt(login_user_res['userData'])
+    )
+
 @app.route('/api/login', methods=['POST'])
-def index() -> tuple:
+def login() -> tuple:
     login_user_data: dict = request.json['userData']
     # meta_data: dict = request.json['metaData']
 
-    user_data: dict = {
-        'username': login_user_data['username'],
-        'user_id': '1234',
-        'discriminant': '9999',
-    }
+    login_user_res: dict = DatabaseHandler.login_user(login_user_data)
+
+    if login_user_res['status'] == DatabaseStatusCode.FAIL:
+        return ResponseHandler.login_user_fail()
 
     """ Always return a 200 response, even if the login fails. """
-    return ResponseHandler.login_user_succ(user_data, JWTHandler.construct_jwt())
+    return ResponseHandler.login_user_succ(
+        login_user_res['userData'], 
+        JWTHandler.construct_jwt(login_user_res['userData'])
+    )
 
 
 @app.route('/api/verifySession', methods=['POST'])
